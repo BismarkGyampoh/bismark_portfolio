@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: portfolio-api
+    region: oregon
+    plan: free
+    env: node
+    rootDir: server
+    buildCommand: |
+      npm install
+      npx prisma generate
+      npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: CLIENT_URL
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: TRUSTED_ORIGINS
+        sync: false
+
+databases:
+  - name: portfolio-db
+    databaseName: portfolio_db
+    user: portfolio

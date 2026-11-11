@@ -1,0 +1,241 @@
+// Prisma schema — Professional Portfolio Website
+// Part 6: PostgreSQL + Prisma ORM Integration
+// Run: npx prisma migrate dev --name init
+// Then: npx prisma generate
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Auth + Admin
+// ---------------------------------------------------------------------------
+
+// Session model for database-backed authentication
+model Session {
+  id        String    @id @default(cuid())
+  tokenHash String // hashed token (argon2)
+  userId    String // FK to AdminUser
+  createdAt DateTime  @default(now())
+  expiresAt DateTime // null = never expires
+  revokedAt DateTime? // null = active
+
+  user AdminUser @relation(fields: [userId], references: [id])
+
+  @@unique([tokenHash])
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// Auth + Admin (end)
+// ---------------------------------------------------------------------------
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String // never plain-text; bcrypt/argon2 hash
+  name         String?
+  role         String    @default("admin") // "admin" | "superadmin"
+  lastLoginAt  DateTime? @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  isActive     Boolean   @default(true)
+  sessions     Session[]
+}
+
+// ---------------------------------------------------------------------------
+// Portfolio Content
+// ---------------------------------------------------------------------------
+
+model Project {
+  id               String              @id @default(cuid())
+  title            String
+  slug             String              @unique
+  shortDescription String?
+  description      String?
+  featuredImage    String? // URL from Cloudinary / image provider
+  liveUrl          String? // public demo link
+  githubUrl        String? // source code repo
+  featured         Boolean             @default(false)
+  published        Boolean             @default(true)
+  displayOrder     Int                 @default(0)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  categoryId       String?
+  category         ProjectCategory?    @relation(fields: [categoryId], references: [id])
+  technologies     ProjectTechnology[]
+}
+
+// Many-to-many: Project ↔ Technology
+model Technology {
+  id        String              @id @default(cuid())
+  name      String              @unique
+  slug      String              @unique
+  createdAt DateTime            @default(now())
+  projects  ProjectTechnology[]
+}
+
+// Join table for Project-Technology many-to-many
+model ProjectTechnology {
+  project       String
+  technology    String
+  assignedAt    DateTime   @default(now())
+  projectRef    Project    @relation(fields: [project], references: [slug])
+  technologyRef Technology @relation(fields: [technology], references: [slug])
+
+  @@id([project, technology])
+}
+
+// Project category (optional grouping)
+model ProjectCategory {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  slug         String    @unique
+  displayOrder Int       @default(0)
+  projects     Project[] // belongs to category
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model MediaArtwork {
+  id           String   @id @default(cuid())
+  title        String
+  altText      String
+  imageUrl     String
+  displayOrder Int      @default(0)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([published, displayOrder])
+}
+
+model SiteProfile {
+  id           String   @id @default("default")
+  name         String
+  title        String
+  headline     String
+  introduction String   @db.Text
+  aboutShort   String   @db.Text
+  aboutLong    String   @db.Text
+  interests    String   @db.Text
+  philosophy   String   @db.Text
+  location     String
+  email        String
+  whatsapp     String
+  whatsappUrl  String
+  imagePath    String
+  cvPath       String
+  socials      Json
+  updatedAt    DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Skills
+// ---------------------------------------------------------------------------
+
+model SkillCategory {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  slug         String   @unique
+  displayOrder Int      @default(0)
+  skills       Skill[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Skill {
+  id           String        @id @default(cuid())
+  name         String
+  category     SkillCategory @relation(fields: [categoryId], references: [id])
+  categoryId   String
+  proficiency  String? // e.g., "Beginner", "Intermediate", "Advanced", or 0-100
+  icon         String? // lucide icon key or Cloudinary path
+  displayOrder Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Professional History
+// ---------------------------------------------------------------------------
+
+model Experience {
+  id             String    @id @default(cuid())
+  company        String
+  position       String
+  employmentType String? // "full-time" | "part-time" | "contract" | "internship" | "volunteer"
+  location       String?
+  description    String?
+  startDate      DateTime? @db.Date
+  endDate        DateTime? @db.Date // null if current
+  current        Boolean   @default(false)
+  displayOrder   Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Education {
+  id            String    @id @default(cuid())
+  institution   String
+  qualification String // e.g., "BSc", "MSc", "Certificate"
+  fieldOfStudy  String?
+  description   String?
+  startDate     DateTime? @db.Date
+  endDate       DateTime? @db.Date // null if current
+  current       Boolean   @default(false)
+  displayOrder  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Blog
+// ---------------------------------------------------------------------------
+
+model BlogCategory {
+  id           String     @id @default(cuid())
+  name         String     @unique
+  slug         String     @unique
+  displayOrder Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  posts        BlogPost[]
+}
+
+model BlogPost {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  excerpt     String?
+  content     String // Markdown or rich text (sanitized on upload)
+  coverImage  String? // URL from Cloudinary / image provider
+  published   Boolean       @default(true)
+  publishedAt DateTime? // null if not published
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  category    BlogCategory? @relation(fields: [categoryId], references: [id])
+  categoryId  String? // optional FK
+}
+
+// ---------------------------------------------------------------------------
+// Contact
+// ---------------------------------------------------------------------------
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String? // optional
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Index for querying unread messages
+  @@index([read, createdAt])
+}
