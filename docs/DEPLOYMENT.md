@@ -58,7 +58,7 @@ Use the following rewrite rule if needed:
 - Root directory: `server`
 - Build command:
 ```bash
-npm install && npx prisma generate && npm run build
+npm ci --include=dev && npx prisma generate && npm run build
 ```
 - Start command:
 ```bash
@@ -68,14 +68,13 @@ npm run start
 ### Required environment variables
 ```env
 NODE_ENV=production
-PORT=5000
 CLIENT_URL=https://your-frontend-url.example.com
 DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/portfolio_db?schema=public"
 COOKIE_SECURE=true
 TRUSTED_ORIGINS=https://your-frontend-url.example.com,https://www.your-frontend-url.example.com
 ```
 
-`CLIENT_URL` and `DATABASE_URL` are required for production startup. Session cookies are HTTP-only and use `SameSite=None; Secure` in production. Mutating requests that include a browser `Origin` must match `TRUSTED_ORIGINS`.
+`npm ci --include=dev` ensures the TypeScript compiler and type packages are installed during Render builds, even when `NODE_ENV=production`. Render supplies `PORT` automatically. `CLIENT_URL` and `DATABASE_URL` are required for production startup. Session cookies are HTTP-only and use `SameSite=None; Secure` in production. Mutating requests that include a browser `Origin` must match `TRUSTED_ORIGINS`.
 
 ## Database setup
 
