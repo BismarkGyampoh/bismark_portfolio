@@ -9,6 +9,7 @@
         "dev": "tsx watch src/server.ts",
         "start": "node dist/server.js",
         "setup:admin": "node scripts/setup-admin.js",
+        "seed:media": "node scripts/seed-media.js",
         "seed:portfolio": "node scripts/seed-portfolio-content.js"
     },
     "keywords": [],
