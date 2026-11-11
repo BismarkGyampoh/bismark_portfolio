@@ -1,4 +1,6 @@
-const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'
+const apiBaseUrl = import.meta.env.PROD
+  ? '/api/v1'
+  : (import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1')
 
 function getErrorMessage(error, status) {
   if (typeof error === 'string' && error.trim()) return error
@@ -63,6 +65,7 @@ export async function getHealth() {
 
 export function resolveMediaUrl(path) {
   if (typeof path === 'string' && path.startsWith('/uploads/media/')) {
+    if (apiBaseUrl.startsWith('/')) return path
     return new URL(path, apiBaseUrl).toString()
   }
   return path
