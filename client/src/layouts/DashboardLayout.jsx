@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowUpRight, LogOut } from 'lucide-react'
 import { SidebarNav } from '../components/dashboard/SidebarNav.jsx'
@@ -10,6 +11,7 @@ const pageTitles = {
   '/dashboard/skills': 'Skills',
   '/dashboard/experience': 'Experience',
   '/dashboard/education': 'Education',
+  '/dashboard/certifications': 'Certifications',
   '/dashboard/blog': 'Blog',
   '/dashboard/messages': 'Messages',
   '/dashboard/profile': 'Public profile',
@@ -20,10 +22,22 @@ export default function DashboardLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const [loggingOut, setLoggingOut] = useState(false)
 
   const handleLogout = async () => {
-    await logout()
-    navigate('/admin/login', { replace: true })
+    if (loggingOut) return
+    setLoggingOut(true)
+    try {
+      await logout()
+      navigate('/admin/login', { replace: true })
+    } catch {
+      navigate('/admin/login', {
+        replace: true,
+        state: { notice: 'Your browser was signed out, but the server could not confirm session revocation. Please sign in again.' },
+      })
+    } finally {
+      setLoggingOut(false)
+    }
   }
 
   return (
@@ -50,8 +64,10 @@ export default function DashboardLayout() {
                 type="button"
                 onClick={handleLogout}
                 className="dashboard-logout"
+                disabled={loggingOut}
+                aria-busy={loggingOut}
               >
-                <LogOut size={16} /><span>Logout</span>
+                <LogOut size={16} /><span>{loggingOut ? 'Logging out…' : 'Logout'}</span>
               </button>
             </div>
           </div>

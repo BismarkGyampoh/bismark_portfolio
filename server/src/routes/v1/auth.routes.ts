@@ -113,22 +113,21 @@ router.put('/password', authenticate, passwordChangeLimiter, async (req: Request
 })
 
 // POST /api/v1/auth/logout - Administrator logout
-router.post('/logout', authenticate, async (req: Request, res: Response) => {
+router.post('/logout', async (req: Request, res: Response) => {
   try {
-    await logout(req.cookies.auth_token || '')
-
-    res.clearCookie('auth_token', {
-      ...cookieOptions
-    })
-
+    const token = req.cookies?.auth_token
+    if (token) await logout(token)
+    res.clearCookie('auth_token', { ...cookieOptions })
     res.json({
       success: true,
       data: { message: 'Successfully logged out' }
     })
-  } catch {
+  } catch (error) {
+    console.error('[auth] Logout session revocation failed:', error)
+    res.clearCookie('auth_token', { ...cookieOptions })
     res.status(500).json({
       success: false,
-      error: 'Unable to complete logout'
+      error: 'Browser session cleared, but server session revocation failed'
     })
   }
 })

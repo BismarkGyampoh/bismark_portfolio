@@ -43,8 +43,6 @@ export function AuthProvider({ children }) {
       await requestJson('/auth/logout', {
         method: 'POST',
       })
-    } catch {
-      // Ignore logout network errors and clear local auth state.
     } finally {
       setUser(null)
     }
