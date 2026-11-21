@@ -16,6 +16,24 @@ const envSchema = z.object({
   COOKIE_SECURE: z.enum(['true', 'false']).default('false').transform((value) => value === 'true'),
   TRUSTED_ORIGINS: z.string().optional(),
 }).superRefine((config, context) => {
+  if (config.SUPABASE_URL) {
+    const storageUrl = new URL(config.SUPABASE_URL);
+    if (
+      !['http:', 'https:'].includes(storageUrl.protocol) ||
+      storageUrl.username ||
+      storageUrl.password ||
+      storageUrl.pathname !== "/" ||
+      storageUrl.search ||
+      storageUrl.hash
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['SUPABASE_URL'],
+        message: 'Must be the Supabase project HTTP(S) URL, without credentials or a path; do not use DATABASE_URL.',
+      });
+    }
+  }
+
   if (config.NODE_ENV !== 'production') return;
 
   if (!config.CLIENT_URL) {
@@ -52,7 +70,7 @@ export const env = {
   port: parsed.data.PORT,
   clientUrl,
   databaseUrl: parsed.data.DATABASE_URL ?? '',
-  supabaseUrl: parsed.data.SUPABASE_URL?.replace(/\/+$/, '') ?? '',
+  supabaseUrl: parsed.data.SUPABASE_URL ? new URL(parsed.data.SUPABASE_URL).origin : '',
   supabaseServiceRoleKey: parsed.data.SUPABASE_SERVICE_ROLE_KEY ?? '',
   supabaseStorageBucket: parsed.data.SUPABASE_STORAGE_BUCKET,
   isProduction: parsed.data.NODE_ENV === 'production',

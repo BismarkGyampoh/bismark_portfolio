@@ -81,7 +81,7 @@ SUPABASE_STORAGE_BUCKET=portfolio-assets
 
 `npm ci --include=dev` ensures the TypeScript compiler and type packages are installed during Render builds, even when `NODE_ENV=production`. Render supplies `PORT` automatically. `CLIENT_URL` and `DATABASE_URL` are required for production startup. Session cookies are HTTP-only and use `SameSite=None; Secure` in production. Mutating requests that include a browser `Origin` must match `TRUSTED_ORIGINS`.
 
-The Supabase URL and service-role key are required for uploads. Keep the service-role key only in Render's private environment variables; never place it in a `VITE_*` variable or commit it. Create a public Storage bucket named `portfolio-assets` (or configure a different bucket name above). Portfolio images, uploaded media, and résumé PDFs are intentionally public after upload.
+Set `SUPABASE_URL` to the project URL shown in Supabase Project Settings > API (for example, `https://your-project-ref.supabase.co`); it is not the PostgreSQL `DATABASE_URL`. The server validates this distinction at startup. The Supabase URL and service-role key are required for uploads. Keep the service-role key only in Render's private environment variables; never place it in a `VITE_*` variable or commit it. Create a public Storage bucket named `portfolio-assets` (or configure a different bucket name above). Portfolio images, uploaded media, and résumé PDFs are intentionally public after upload.
 
 ## Database setup
 

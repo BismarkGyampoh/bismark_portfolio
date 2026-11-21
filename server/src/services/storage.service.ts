@@ -18,6 +18,10 @@ function encodedPath(path: string) {
   return path.split("/").map(encodeURIComponent).join("/");
 }
 
+function storageObjectUrl(path: string) {
+  return new URL(`/storage/v1/object/${path}`, env.supabaseUrl).toString();
+}
+
 export function detectFileMimeType(buffer: Buffer): string | null {
   if (
     buffer.length >= 8 &&
@@ -39,8 +43,10 @@ export async function uploadPublicAsset(buffer: Buffer, contentType: string, fol
   if (!extension) throw new Error("This file type is not supported.");
 
   const objectPath = `${folder}/${randomUUID()}.${extension}`;
+  const bucketPath = encodeURIComponent(env.supabaseStorageBucket);
+  const encodedObjectPath = encodedPath(objectPath);
   const response = await fetch(
-    `${env.supabaseUrl}/storage/v1/object/${encodeURIComponent(env.supabaseStorageBucket)}/${encodedPath(objectPath)}`,
+    storageObjectUrl(`${bucketPath}/${encodedObjectPath}`),
     {
       method: "POST",
       headers: {
@@ -58,19 +64,20 @@ export async function uploadPublicAsset(buffer: Buffer, contentType: string, fol
     throw new Error(`Storage upload failed (${response.status}). Check the bucket and server storage configuration.`);
   }
 
-  return `${env.supabaseUrl}/storage/v1/object/public/${encodeURIComponent(env.supabaseStorageBucket)}/${encodedPath(objectPath)}`;
+  return storageObjectUrl(`public/${bucketPath}/${encodedObjectPath}`);
 }
 
 export async function deletePublicAsset(publicUrl: string) {
   if (!env.supabaseUrl || !env.supabaseServiceRoleKey) return;
-  const publicPrefix = `${env.supabaseUrl}/storage/v1/object/public/${encodeURIComponent(env.supabaseStorageBucket)}/`;
+  const bucketPath = encodeURIComponent(env.supabaseStorageBucket);
+  const publicPrefix = storageObjectUrl(`public/${bucketPath}/`);
   if (!publicUrl.startsWith(publicPrefix)) return;
   const objectPath = decodeURIComponent(publicUrl.slice(publicPrefix.length));
   if (!objectPath || objectPath.split("/").includes("..")) return;
 
   try {
     const response = await fetch(
-      `${env.supabaseUrl}/storage/v1/object/${encodeURIComponent(env.supabaseStorageBucket)}`,
+      storageObjectUrl(bucketPath),
       {
         method: "DELETE",
         headers: {
