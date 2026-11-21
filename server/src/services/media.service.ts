@@ -1,21 +1,9 @@
 import { z } from "zod";
 import { prisma } from "./prisma.service.js";
-import { unlink } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
-import { join } from "node:path";
-
-const uploadDirectory = fileURLToPath(new URL("../../uploads/media/", import.meta.url));
+import { deletePublicAsset } from "./storage.service.js";
 
 async function removeManagedUpload(imageUrl: string) {
-  const match = /^\/uploads\/media\/([a-f0-9-]+\.(?:jpg|png|webp))$/.exec(imageUrl);
-  if (!match) return;
-
-  try {
-    await unlink(join(uploadDirectory, match[1]));
-  } catch (error) {
-    if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") return;
-    console.error("Unable to remove artwork image:", error);
-  }
+  await deletePublicAsset(imageUrl);
 }
 
 const imageUrlSchema = z.string().trim().min(1).max(2048).refine((value) => {

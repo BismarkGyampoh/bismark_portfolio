@@ -32,7 +32,7 @@ export default function ProjectsPage() {
   return (
     <div className="py-14 sm:py-20">
       <Container>
-        <SectionHeading eyebrow="Selected work" title="Projects" description="Web, technology, and creative projects shaped by practical needs and people." />
+        <SectionHeading eyebrow="Selected work" title="Projects" description="A few web projects and design pieces I’ve worked on." />
         <div className="mb-8 flex flex-wrap gap-2" role="tablist" aria-label="Project categories">
           {categories.map((c) => {
             const active = c === category
@@ -57,7 +57,7 @@ export default function ProjectsPage() {
             {filtered.map((p) => <ProjectCard key={p.slug} project={p} />)}
           </div>
         ) : !loading ? (
-          <EmptyState title="No projects in this category" description="Try another filter or add verified projects to this category." />
+          <EmptyState title="No projects here yet" description="Try a different category." />
         ) : null}
       </Container>
     </div>

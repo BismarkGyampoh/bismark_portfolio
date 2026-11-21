@@ -35,7 +35,7 @@ export default function BlogPage() {
   return (
     <div className="py-14 sm:py-20">
       <Container>
-        <SectionHeading eyebrow="Writing" title="Blog" description="Articles and notes on technology, systems, and creative work." />
+        <SectionHeading eyebrow="Writing" title="Notes and articles" description="Thoughts on technology, problem-solving, and design." />
         <div className="mb-8 flex flex-wrap gap-2" role="tablist" aria-label="Blog categories">
           {categories.map((c) => {
             const active = c === category
@@ -45,7 +45,7 @@ export default function BlogPage() {
           })}
         </div>
         {loading ? <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Loading blog posts…</p> : null}
-        {!loading && !filtered.length ? <EmptyState title="No articles published yet" description="Articles will appear here when they are available." /> : null}
+        {!loading && !filtered.length ? <EmptyState title="No posts yet" description="I haven’t shared anything here yet. Check back later." /> : null}
         {!loading && filtered.length ? (
           <>
             {featured ? (

@@ -4,7 +4,7 @@ This document describes how to deploy the portfolio monorepo to production witho
 
 ## Current deployment status
 
-No hosting provider or production database has been provisioned and no public deployment has been tested. The workspace has no Git remote and the source files are untracked. Production launch also requires real portfolio content and owner authorization for the selected hosting, database, and storage accounts. File uploads, cloud storage, and email delivery are not implemented.
+The portfolio is deployed with a Vercel frontend, Render API, and Supabase Postgres. The API supports database-backed portfolio content and admin-managed uploads. Email delivery is not implemented.
 
 ## Recommended architecture
 
@@ -35,10 +35,12 @@ This architecture matches the project structure and keeps deployment simple to m
 - Output directory: `client/dist`
 - Root directory: `.` if deploying monorepo root, or `client` if configured as a separate project
 
-### Required environment variables
+### Optional environment variables
 ```env
 VITE_API_URL=https://your-backend-url.example.com/api/v1
 ```
+
+The deployed Vercel app uses same-origin `/api/v1` rewrites; do not set `VITE_API_URL` unless intentionally pointing the client at another API.
 
 ### SPA routing
 Use the following rewrite rule if needed:
@@ -69,12 +71,17 @@ npm run start
 ```env
 NODE_ENV=production
 CLIENT_URL=https://your-frontend-url.example.com
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/portfolio_db?schema=public"
+DATABASE_URL=<set as a private Render environment variable>
 COOKIE_SECURE=true
 TRUSTED_ORIGINS=https://your-frontend-url.example.com,https://www.your-frontend-url.example.com
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<set as a private Render environment variable>
+SUPABASE_STORAGE_BUCKET=portfolio-assets
 ```
 
 `npm ci --include=dev` ensures the TypeScript compiler and type packages are installed during Render builds, even when `NODE_ENV=production`. Render supplies `PORT` automatically. `CLIENT_URL` and `DATABASE_URL` are required for production startup. Session cookies are HTTP-only and use `SameSite=None; Secure` in production. Mutating requests that include a browser `Origin` must match `TRUSTED_ORIGINS`.
+
+The Supabase URL and service-role key are required for uploads. Keep the service-role key only in Render's private environment variables; never place it in a `VITE_*` variable or commit it. Create a public Storage bucket named `portfolio-assets` (or configure a different bucket name above). Portfolio images, uploaded media, and résumé PDFs are intentionally public after upload.
 
 ## Database setup
 
@@ -102,6 +109,16 @@ Important:
 - Use a unique password generated outside the repository.
 - The script refuses to create a duplicate account for the same email.
 
+## Seed the media gallery
+
+The original flyers are deployed as static files in `client/public/creative-media`. After setting `DATABASE_URL` to the production Supabase URI, register them in the database with:
+
+```bash
+npm run seed:media --prefix server
+```
+
+This repeatable command adds only artworks whose image paths are not already present; it does not overwrite existing gallery entries. Keep the Supabase URI private and clear any temporary environment variable after the command completes.
+
 ## Health checks
 
 The backend should expose:
@@ -123,11 +140,11 @@ This should return a JSON success payload with a healthy application status.
 
 ## Deployment sequence
 
-1. Provision database and storage.
+1. Provision the database and create the public Storage bucket.
 2. Set backend environment variables.
 3. Push to GitHub.
 4. Trigger deployment on the provider.
-5. Run Prisma migrations.
+5. Run `npx prisma migrate deploy` from `server` to apply any pending CMS and public-copy migrations.
 6. Verify health endpoint and admin login.
 7. Deploy frontend with production `VITE_API_URL`.
 8. Run smoke tests for public pages and admin dashboard.
@@ -144,4 +161,4 @@ Rollback is best handled by redeploying the previous working Git commit or the l
 
 ## Final note
 
-This project is prepared for deployment but the actual live deployment still requires explicit provider credentials, domain approval, and security-sensitive setup from the project owner.
+The deployment owner must configure private database and Supabase Storage credentials in the hosting provider. Never share those values in chat or commit them to the repository.

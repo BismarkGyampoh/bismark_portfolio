@@ -3,9 +3,7 @@ import { skillCategories as fallbackSkillCategories, skillsPreview as fallbackSk
 import { education as fallbackEducation, experience as fallbackExperience, certifications as fallbackCertifications, getTimeline as getFallbackTimeline } from '../data/experience.js'
 import { posts as fallbackPosts } from '../data/blog.js'
 import { creativeMedia as fallbackMedia } from '../data/creativeMedia.js'
-import { resolveMediaUrl } from './api.js'
-
-const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1'
+import { apiBaseUrl, resolveMediaUrl } from './api.js'
 
 async function safeRequest(path, fallbackValue, options = {}) {
   try {
@@ -71,6 +69,19 @@ function mapEducation(item) {
     dates: [formatYear(item.startDate), item.current ? 'Present' : formatYear(item.endDate)].filter(Boolean).join(' – '),
     description: item.description || '',
     achievements: [],
+  }
+}
+
+function mapCertification(item) {
+  const dateLabel = [formatYear(item.issuedAt), item.expiresAt ? `Expires ${formatYear(item.expiresAt)}` : ''].filter(Boolean).join(' – ')
+  return {
+    type: 'Certification',
+    organization: item.issuer,
+    title: item.name,
+    dates: dateLabel,
+    description: item.description || '',
+    achievements: item.credentialId ? [`Credential ID: ${item.credentialId}`] : [],
+    url: item.credentialUrl || '',
   }
 }
 
@@ -144,9 +155,10 @@ export async function getSkillsContent() {
 }
 
 export async function getExperienceContent() {
-  const [educationRecords, experienceRecords] = await Promise.all([
+  const [educationRecords, experienceRecords, certificationRecords] = await Promise.all([
     safeRequest('/education', null),
     safeRequest('/experience', null),
+    safeRequest('/certifications', null),
   ])
 
   if (!Array.isArray(educationRecords) || !Array.isArray(experienceRecords)) {
@@ -160,12 +172,15 @@ export async function getExperienceContent() {
 
   const educationItems = educationRecords.map(mapEducation)
   const experienceItems = experienceRecords.map(mapExperience)
-  const timeline = [...experienceItems, ...educationItems]
+  const certificationItems = Array.isArray(certificationRecords)
+    ? certificationRecords.map(mapCertification)
+    : fallbackCertifications
+  const timeline = [...experienceItems, ...educationItems, ...certificationItems]
 
   return {
     education: educationItems,
     experience: experienceItems,
-    certifications: fallbackCertifications,
+    certifications: certificationItems,
     timeline,
   }
 }

@@ -4,12 +4,13 @@ import { Button, Card, SectionHeading } from '../components/ui.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { requestJson } from '../services/api.js'
 import { profile as defaultProfile } from '../data/profile.js'
+import { AssetUploadField } from '../components/dashboard/AssetUploadField.jsx'
 
 export function DashboardSettings() {
   const navigate = useNavigate()
   const { isAuthenticated, clearSession } = useAuth()
   const [siteProfile, setSiteProfile] = useState(null)
-  const [identity, setIdentity] = useState({ name: '', title: '', headline: '', email: '' })
+  const [identity, setIdentity] = useState({ name: '', title: '', headline: '', email: '', logoPath: '', faviconPath: '' })
   const [loadingIdentity, setLoadingIdentity] = useState(true)
   const [savingIdentity, setSavingIdentity] = useState(false)
   const [identityError, setIdentityError] = useState('')
@@ -32,6 +33,8 @@ export function DashboardSettings() {
             title: result.data.title,
             headline: result.data.headline,
             email: result.data.email,
+            logoPath: result.data.logoPath || '',
+            faviconPath: result.data.faviconPath || '',
           })
           setIdentityError('')
         }
@@ -44,6 +47,8 @@ export function DashboardSettings() {
             title: defaultProfile.title,
             headline: defaultProfile.headline,
             email: defaultProfile.email,
+            logoPath: '',
+            faviconPath: '',
           })
           setIdentityError('')
         } else {
@@ -80,6 +85,8 @@ export function DashboardSettings() {
         title: result.data.title,
         headline: result.data.headline,
         email: result.data.email,
+        logoPath: result.data.logoPath || '',
+        faviconPath: result.data.faviconPath || '',
       })
       setIdentityNotice('Site identity saved. Refresh the public site to see the updated browser title.')
     } catch (error) {
@@ -168,6 +175,16 @@ export function DashboardSettings() {
                 value={identity.email}
                 onChange={(event) => setIdentity((current) => ({ ...current, email: event.target.value }))}
                 required
+              />
+              <AssetUploadField
+                label="Site logo"
+                value={identity.logoPath}
+                onChange={(logoPath) => setIdentity((current) => ({ ...current, logoPath }))}
+              />
+              <AssetUploadField
+                label="Browser favicon"
+                value={identity.faviconPath}
+                onChange={(faviconPath) => setIdentity((current) => ({ ...current, faviconPath }))}
               />
               {identityError ? <p role="alert" className="text-sm text-red-700">{identityError}</p> : null}
               {identityNotice ? <p role="status" className="text-sm text-green-700">{identityNotice}</p> : null}

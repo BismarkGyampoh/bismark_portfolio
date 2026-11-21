@@ -15,6 +15,7 @@ import {
   Wrench,
   Images,
   ExternalLink,
+  Award,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
 
@@ -25,6 +26,7 @@ const navItems = [
   { path: '/dashboard/skills', icon: Wrench, label: 'Skills' },
   { path: '/dashboard/experience', icon: Briefcase, label: 'Experience' },
   { path: '/dashboard/education', icon: GraduationCap, label: 'Education' },
+  { path: '/dashboard/certifications', icon: Award, label: 'Certifications' },
   { path: '/dashboard/blog', icon: Library, label: 'Blog' },
   { path: '/dashboard/messages', icon: MessageCircle, label: 'Messages' },
   { path: '/dashboard/profile', icon: User, label: 'Profile' },

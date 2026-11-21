@@ -51,7 +51,7 @@ export default function ProjectDetailPage() {
   }
   if (!project) {
     return (
-      <div className="py-14 sm:py-20"><Container><EmptyState title="Project not found" description="This project does not exist or has been moved." /><div className="mt-6 text-center"><Button to="/projects" variant="secondary">Back to projects</Button></div></Container></div>
+      <div className="py-14 sm:py-20"><Container><EmptyState title="Can’t find that project" description="It may have been removed or the link may be out of date." /><div className="mt-6 text-center"><Button to="/projects" variant="secondary">Back to projects</Button></div></Container></div>
     )
   }
   const related = relatedProjects.filter((item) => project.related?.includes(item.slug))
@@ -75,12 +75,12 @@ export default function ProjectDetailPage() {
         </div>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
-          {project.problem ? <DetailBlock title="Problem statement" body={project.problem} /> : null}
-          {project.solution ? <DetailBlock title="Proposed solution" body={project.solution} /> : null}
-          {project.objectives?.length ? <Card className="p-6"><h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Objectives</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6" style={{ color: 'var(--text-secondary)' }}>{project.objectives.map((o) => <li key={o}>{o}</li>)}</ul></Card> : null}
-          {project.process?.length ? <Card className="p-6"><h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Implementation process</h2><ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6" style={{ color: 'var(--text-secondary)' }}>{project.process.map((s) => <li key={s}>{s}</li>)}</ol></Card> : null}
-          {project.features?.length ? <Card className="p-6"><h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Key features</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6" style={{ color: 'var(--text-secondary)' }}>{project.features.map((f, index) => <li key={`${index}-${f}`}>{f}</li>)}</ul></Card> : null}
-          <Card className="p-6"><h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Technologies & areas</h2><div className="mt-3 flex flex-wrap gap-2">{project.tags.map((t) => <span key={t} className="rounded-full border px-3 py-1 text-sm" style={{ borderColor: 'var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>{t}</span>)}</div>{project.challenges ? <><h3 className="mt-6 text-sm font-semibold uppercase tracking-wide" style={{ color: 'var(--text-primary)' }}>Challenges & lessons</h3><p className="mt-2 text-sm leading-6" style={{ color: 'var(--text-secondary)' }}>{project.challenges}</p></> : null}</Card>
+          {project.problem ? <DetailBlock title="The challenge" body={project.problem} /> : null}
+          {project.solution ? <DetailBlock title="About the project" body={project.solution} /> : null}
+          {project.objectives?.length ? <Card className="p-6"><h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Project goals</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6" style={{ color: 'var(--text-secondary)' }}>{project.objectives.map((o) => <li key={o}>{o}</li>)}</ul></Card> : null}
+          {project.process?.length ? <Card className="p-6"><h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>How I approached it</h2><ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6" style={{ color: 'var(--text-secondary)' }}>{project.process.map((s) => <li key={s}>{s}</li>)}</ol></Card> : null}
+          {project.features?.length ? <Card className="p-6"><h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>What it includes</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6" style={{ color: 'var(--text-secondary)' }}>{project.features.map((f, index) => <li key={`${index}-${f}`}>{f}</li>)}</ul></Card> : null}
+          <Card className="p-6"><h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Tools and technologies</h2><div className="mt-3 flex flex-wrap gap-2">{project.tags.map((t) => <span key={t} className="rounded-full border px-3 py-1 text-sm" style={{ borderColor: 'var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>{t}</span>)}</div>{project.challenges ? <><h3 className="mt-6 text-sm font-semibold uppercase tracking-wide" style={{ color: 'var(--text-primary)' }}>Challenges and lessons</h3><p className="mt-2 text-sm leading-6" style={{ color: 'var(--text-secondary)' }}>{project.challenges}</p></> : null}</Card>
         </div>
 
         <section className="mt-12">
@@ -99,7 +99,7 @@ export default function ProjectDetailPage() {
 
         {related.length ? (
           <section className="mt-14">
-            <SectionHeading eyebrow="Related" title="Related projects" description="Sample related items." />
+            <SectionHeading eyebrow="Related" title="More projects" description="A few other projects you might like." />
             <div className="grid gap-6 md:grid-cols-2">{related.map((p) => <ProjectCard key={p.slug} project={p} />)}</div>
           </section>
         ) : null}

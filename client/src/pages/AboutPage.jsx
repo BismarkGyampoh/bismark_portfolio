@@ -11,12 +11,12 @@ export default function AboutPage() {
             <img src={profile.imagePath} alt={`Portrait of ${profile.name}`} className="aspect-[4/5] w-full object-cover" />
           </div>
           <div>
-            <SectionHeading eyebrow="About" title="Information systems, technology, and creative work." description={profile.introduction} />
+            <SectionHeading eyebrow="About" title="A little about my work." description={profile.introduction} />
             <div className="space-y-5 text-base leading-8" style={{ color: 'var(--text-secondary)' }}>
               {profile.aboutLong.map((p) => <p key={p}>{p}</p>)}
             </div>
             <div className="about-philosophy mt-8 border-y py-5">
-              <h3 className="eyebrow">Working philosophy</h3>
+              <h3 className="eyebrow">How I work</h3>
               <p className="mt-2 leading-7" style={{ color: 'var(--text-secondary)' }}>{profile.philosophy}</p>
             </div>
             <div className="mt-8">
@@ -26,8 +26,8 @@ export default function AboutPage() {
               </ul>
             </div>
             <div className="mt-10 flex flex-wrap gap-3">
-              <Button as="a" href={profile.cvPath} download="Bismark-Gyampoh-Resume.pdf" variant="primary">Download CV</Button>
-              <Button to="/contact" variant="secondary">Contact</Button>
+              <Button as="a" href={profile.cvPath} download="Bismark-Gyampoh-Resume.pdf" variant="primary">Download my CV</Button>
+              <Button to="/contact" variant="secondary">Get in touch</Button>
             </div>
           </div>
         </div>

@@ -18,6 +18,7 @@ import { DashboardMedia } from './pages/DashboardMedia.jsx'
 import { DashboardSkills } from './pages/DashboardSkills.jsx'
 import { DashboardExperience } from './pages/DashboardExperience.jsx'
 import { DashboardEducation } from './pages/DashboardEducation.jsx'
+import { DashboardCertifications } from './pages/DashboardCertifications.jsx'
 import { DashboardBlog } from './pages/DashboardBlog.jsx'
 import { DashboardMessages } from './pages/DashboardMessages.jsx'
 import { DashboardProfile } from './pages/DashboardProfile.jsx'
@@ -70,6 +71,7 @@ export default function App() {
           <Route path="skills" element={<DashboardSkills />} />
           <Route path="experience" element={<DashboardExperience />} />
           <Route path="education" element={<DashboardEducation />} />
+          <Route path="certifications" element={<DashboardCertifications />} />
           <Route path="blog" element={<DashboardBlog />} />
           <Route path="messages" element={<DashboardMessages />} />
           <Route path="profile" element={<DashboardProfile />} />

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button, Card, Container, SectionHeading } from '../components/ui.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { requestJson } from '../services/api.js'
+import { AssetUploadField } from '../components/dashboard/AssetUploadField.jsx'
 
 const blankForm = {
   title: '',
@@ -222,10 +223,11 @@ export function DashboardBlog() {
           </label>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <label className="grid gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-              Cover image URL
-              <input name="coverImage" value={form.coverImage} onChange={handleChange} className="rounded-xl border px-3 py-2.5" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }} placeholder="https://example.com/cover.jpg" />
-            </label>
+            <AssetUploadField
+              label="Cover image"
+              value={form.coverImage}
+              onChange={(coverImage) => setForm((current) => ({ ...current, coverImage }))}
+            />
             <label className="inline-flex items-center gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
               <input type="checkbox" name="published" checked={form.published} onChange={handleChange} />
               Published

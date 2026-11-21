@@ -28,7 +28,9 @@ export default function Navbar() {
     >
       <div className="site-header-inner mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
         <Link to="/" className="site-wordmark flex items-center gap-3" aria-label={`${profile.name} home`} onClick={() => setOpen(false)}>
-          <span className="wordmark-initials">{profile.initials}</span>
+          {profile.logoPath ? (
+            <img src={profile.logoPath} alt="" className="h-9 w-9 rounded-full object-contain" />
+          ) : <span className="wordmark-initials">{profile.initials}</span>}
           <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{profile.name}</span>
         </Link>
 

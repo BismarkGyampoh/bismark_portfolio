@@ -27,7 +27,17 @@ export function ProfileProvider({ children }) {
     document.querySelector('meta[name="description"]')?.setAttribute('content', description)
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', title)
     document.querySelector('meta[property="og:description"]')?.setAttribute('content', description)
-  }, [profile.name, profile.title, profile.headline, profile.introduction])
+    let icon = document.querySelector('link[rel="icon"]')
+    if (!icon) {
+      icon = document.createElement('link')
+      icon.rel = 'icon'
+      icon.href = '/favicon.svg'
+      document.head.appendChild(icon)
+    }
+    const defaultFavicon = icon.dataset.defaultHref || icon.href
+    icon.dataset.defaultHref = defaultFavicon
+    icon.href = profile.faviconPath || defaultFavicon
+  }, [profile.name, profile.title, profile.headline, profile.introduction, profile.faviconPath])
 
   return <ProfileContext.Provider value={profile}>{children}</ProfileContext.Provider>
 }

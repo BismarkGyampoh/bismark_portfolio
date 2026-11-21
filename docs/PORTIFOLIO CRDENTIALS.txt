@@ -1,0 +1,18 @@
+PORTFOLIO PASSWORD : 0N2bEyCmeCHCZ9zu
+
+
+PORTIFOLIO WEBSITE DATABASE STRING CONNECTION : postgresql://postgres.cjonhnncoklfddftvtco:zcmB0BhengiZ222K@aws-1-eu-west-1.pooler.supabase.com:5432/postgres
+
+
+
+
+
+"postgresql://USER:PASSWORD@localhost:5432/portfolio_db?schema=public"
+
+
+Set-Location C:\xampp\htdocs\bismark_portfolio\server
+
+$secureUrl = Read-Host "postgresql://postgres.cjonhnncoklfddftvtco:zcmB0BhengiZ222K@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" -AsSecureString
+$env:DATABASE_URL = (New-Object System.Net.NetworkCredential("", $secureUrl)).Password
+
+npx prisma migrate deploy

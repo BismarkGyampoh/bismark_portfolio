@@ -131,6 +131,8 @@ model SiteProfile {
   whatsappUrl  String
   imagePath    String
   cvPath       String
+  logoPath     String?
+  faviconPath  String?
   socials      Json
   updatedAt    DateTime @updatedAt
 }
@@ -192,6 +194,22 @@ model Education {
   displayOrder  Int       @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model Certification {
+  id            String   @id @default(cuid())
+  name          String
+  issuer        String
+  credentialId  String?
+  credentialUrl String?
+  description   String?  @db.Text
+  issuedAt      DateTime? @db.Date
+  expiresAt     DateTime? @db.Date
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([displayOrder, issuedAt])
 }
 
 // ---------------------------------------------------------------------------

@@ -12,7 +12,9 @@ export default function Footer() {
       <div className="site-footer-main mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1.4fr_0.8fr_0.8fr]">
         <div className="footer-identity">
           <div className="flex items-center gap-3">
-            <span className="wordmark-initials">{profile.initials}</span>
+            {profile.logoPath ? (
+              <img src={profile.logoPath} alt="" className="h-9 w-9 rounded-full object-contain" />
+            ) : <span className="wordmark-initials">{profile.initials}</span>}
             <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{profile.name}</span>
           </div>
           <p className="mt-4 max-w-sm text-sm leading-6" style={{ color: 'var(--text-secondary)' }}>{profile.aboutShort}</p>

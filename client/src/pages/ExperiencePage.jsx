@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { certifications } from '../data/experience.js'
 import { Card, Container, SectionHeading } from '../components/ui.jsx'
 import { getExperienceContent } from '../services/portfolio.js'
 
@@ -17,6 +16,7 @@ function Timeline({ title, items }) {
                 {item.organization}{item.dates ? <><span aria-hidden="true"> · </span><span style={{ color: 'var(--accent-primary)' }}>{item.dates}</span></> : null}
               </p>
               {item.description ? <p className="mt-3 text-sm leading-7" style={{ color: 'var(--text-secondary)' }}>{item.description}</p> : null}
+              {item.url ? <a className="mt-3 inline-block text-sm underline" href={item.url} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-primary)' }}>Verify credential</a> : null}
               {item.achievements?.length ? (
                 <ul className="mt-3 list-disc space-y-1 pl-5 text-sm" style={{ color: 'var(--text-secondary)' }}>
                   {item.achievements.map((a) => <li key={a}>{a}</li>)}
@@ -33,7 +33,7 @@ function Timeline({ title, items }) {
 export default function ExperiencePage() {
   const [educationData, setEducationData] = useState([])
   const [experienceData, setExperienceData] = useState([])
-  const [certificationData, setCertificationData] = useState(certifications)
+  const [certificationData, setCertificationData] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function ExperiencePage() {
   return (
     <div className="py-14 sm:py-20">
       <Container>
-        <SectionHeading eyebrow="Background" title="Experience & education" description="Professional experience, education, and professional development." />
+        <SectionHeading eyebrow="Background" title="Experience and education" description="A look at my work, education, and professional development." />
         {loading ? <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Loading background data…</p> : null}
         {!loading ? (
           <div className="grid gap-12">

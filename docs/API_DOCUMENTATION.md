@@ -19,7 +19,7 @@ This document includes both implemented routes and planned architecture. The imp
 | Method | Path | Auth | Purpose |
 |---|---|---|---|
 | POST | `/auth/login` | no | Admin login, sets auth cookie |
-| POST | `/auth/logout` | admin | Clear auth cookie |
+| POST | `/auth/logout` | no (cookie optional) | Clear the browser cookie and revoke the matching session when possible |
 | GET | `/auth/me` | admin | Current admin/profile session |
 | PUT | `/auth/password` | admin | Change password after verifying the current password; revokes active sessions |
 | POST | `/auth/refresh` | admin cookie | Rotate session cookie; token is not returned in JSON |
@@ -44,7 +44,9 @@ This document includes both implemented routes and planned architecture. The imp
 | POST | `/media` | admin | Create artwork as multipart form data; accepts `title`, `altText`, optional `imageUrl`, optional `file`, `displayOrder`, and `published` |
 | PUT | `/media/:id` | admin | Update artwork; accepts the same multipart fields, with an optional replacement `file` |
 | DELETE | `/media/:id` | admin | Delete artwork from the gallery |
-| GET | `/uploads/media/:filename` | no | Serve uploaded artwork image |
+| POST | `/uploads/image` | admin | Upload JPG/PNG/WebP for project, blog, profile, or branding fields |
+| POST | `/uploads/document` | admin | Upload a PDF résumé |
+| GET | `/uploads/media/:filename` | no | Legacy local artwork path; new uploads use Supabase Storage URLs |
 | GET | `/skills` | no | Skills |
 | GET | `/skills/categories` | no | Skill categories |
 | POST | `/skills/categories` | admin | Create skill category |
@@ -55,6 +57,10 @@ This document includes both implemented routes and planned architecture. The imp
 | POST | `/education` | admin | Create education record |
 | PUT | `/education/:id` | admin | Update education record |
 | DELETE | `/education/:id` | admin | Delete education record |
+| GET | `/certifications` | no | Certifications and memberships shown publicly |
+| POST | `/certifications` | admin | Add a public certification |
+| PUT | `/certifications/:id` | admin | Update a certification |
+| DELETE | `/certifications/:id` | admin | Delete a certification |
 | GET | `/experience` | no | Experience records |
 | POST | `/experience` | admin | Create experience record |
 | PUT | `/experience/:id` | admin | Update experience record |
@@ -89,7 +95,7 @@ Admin content endpoints use their resource paths (for example, `PUT /profile` an
 | POST | `/media` (multipart) | Create artwork with an optional uploaded image; returns artwork including its image URL |
 | PUT | `/media/:id` (multipart) | Update artwork and optionally replace its uploaded image |
 
-Validation: uploads are limited to JPG, PNG, or WebP, capped at 10 MB, and checked against file signatures. Generated filenames are used and uploaded artwork is served from `/uploads/media/`.
+Validation: uploads are limited to JPG, PNG, WebP, or PDF, capped at 10 MB, and checked against file signatures. Generated filenames are used. Files are stored in the configured Supabase Storage bucket; public assets use its public object URLs.
 
 ## 8. Security Controls
 - Server-side auth/authorization on all `/admin/*` and protected mutations.
@@ -103,6 +109,6 @@ Validation: uploads are limited to JPG, PNG, or WebP, capped at 10 MB, and check
 List endpoints support `page`, `limit` (bounded), and relevant filters; admin lists may include unpublished/drafts.
 
 ## 10. Implementation Notes
-- Implemented now: health, auth login/logout/me/refresh/password change, profile read/update, project/media/skill/experience/education/blog CRUD, dashboard statistics, contact submission, and admin message read/list routes.
-- Not implemented: project/blog/profile file uploads, email notifications, blog search/pagination, and admin contact-message update/delete routes.
+- Implemented now: health, auth login/logout/me/refresh/password change, profile read/update, project/media/skill/experience/education/certification/blog CRUD, image/PDF uploads, dashboard statistics, contact submission, and admin message read/list routes.
+- Not implemented: email notifications, blog search/pagination, and admin contact-message update/delete routes.
 - Local smoke tests are documented in the task report; a Postman collection and automated API test suite are not present.

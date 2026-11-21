@@ -2,15 +2,15 @@ export const profile = {
   name: 'Bismark Gyampoh',
   initials: 'BG',
   title: 'Information Systems & Technology Specialist',
-  headline: 'Web Developer · IT Support Engineer · Graphic & Media Designer',
+  headline: 'Web developer · IT support · Graphic and media design',
   introduction:
-    'Solutions-focused Information Systems and Technology specialist working across web development, database management, network infrastructure, enterprise technical support, and digital design.',
+    'I build websites, support the technology people rely on, and create visual designs through FLiKBi MEDIA. My work also includes databases and networking.',
   aboutShort:
-    'I build and support digital solutions, work with relational and document databases, and help people resolve technology issues. Through FLiKBi MEDIA, I focus on creative and digital media, including branding and design.',
+    'I enjoy working where technology meets everyday needs. I build and support digital tools, work with databases and networks, and help people solve practical IT problems. Through FLiKBi MEDIA, I also create branding and promotional designs.',
   aboutLong: [
-    'My work spans responsive web applications, database management, network infrastructure, and hands-on hardware and software support.',
-    'Through FLiKBi MEDIA, I lead creative and digital media work, including branding and promotional materials. I also take on web development and technical support work.',
-    'I have also supported the ICT Secretariat at the University of Mines and Technology, assisting campus staff and maintaining technical equipment and network infrastructure.',
+    'Most of my work sits somewhere between web development and hands-on IT support. I build websites, work with relational and document databases, and troubleshoot networks, hardware, and software.',
+    'At FLiKBi MEDIA, I create branding, flyers, and other visual work. I also take on web development and technical support projects.',
+    'I supported the ICT Secretariat at the University of Mines and Technology, helping staff with technical issues and maintaining equipment and network infrastructure.',
   ],
   interests: [
     'Web application development',
@@ -21,7 +21,7 @@ export const profile = {
     'Technical documentation',
   ],
   philosophy:
-    'My work combines practical technical support, clear communication, and useful digital experiences.',
+    'I like making technology easier to use—whether that means fixing a problem, improving a system, or building something new.',
   location: 'Takoradi / Tarkwa, Western Region, Ghana',
   email: 'bismarkgyampoh1@gmail.com',
   whatsapp: '+233 551262692',

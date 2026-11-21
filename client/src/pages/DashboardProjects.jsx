@@ -2,6 +2,7 @@
 import { Button, Card, Container, SectionHeading } from '../components/ui.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { requestJson } from '../services/api.js'
+import { AssetUploadField } from '../components/dashboard/AssetUploadField.jsx'
 
 const blankForm = {
   title: '',
@@ -241,10 +242,11 @@ export function DashboardProjectsMinimal() {
               Category if new
               <input value={newCategoryName} onChange={(event) => setNewCategoryName(event.target.value)} className="rounded-xl border px-3 py-2.5" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }} placeholder="Create a category" />
             </label>
-            <label className="grid gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-              Featured image path or URL
-              <input name="featuredImage" value={form.featuredImage} onChange={handleChange} className="rounded-xl border px-3 py-2.5" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }} placeholder="/images/project.jpg" />
-            </label>
+            <AssetUploadField
+              label="Featured image"
+              value={form.featuredImage}
+              onChange={(featuredImage) => setForm((current) => ({ ...current, featuredImage }))}
+            />
             <label className="grid gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
               Live URL
               <input name="liveUrl" value={form.liveUrl} onChange={handleChange} className="rounded-xl border px-3 py-2.5" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }} placeholder="https://example.com" />

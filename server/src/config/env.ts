@@ -10,6 +10,9 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(5000),
   CLIENT_URL: z.string().url().optional(),
   DATABASE_URL: z.string().min(1).optional(),
+  SUPABASE_URL: z.string().url().optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
+  SUPABASE_STORAGE_BUCKET: z.string().regex(/^[a-z0-9][a-z0-9._-]{1,61}[a-z0-9]$/).default('portfolio-assets'),
   COOKIE_SECURE: z.enum(['true', 'false']).default('false').transform((value) => value === 'true'),
   TRUSTED_ORIGINS: z.string().optional(),
 }).superRefine((config, context) => {
@@ -20,6 +23,13 @@ const envSchema = z.object({
   }
   if (!config.DATABASE_URL) {
     context.addIssue({ code: 'custom', path: ['DATABASE_URL'], message: 'Required in production' });
+  }
+  if (Boolean(config.SUPABASE_URL) !== Boolean(config.SUPABASE_SERVICE_ROLE_KEY)) {
+    context.addIssue({
+      code: 'custom',
+      path: ['SUPABASE_SERVICE_ROLE_KEY'],
+      message: 'SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be configured together',
+    });
   }
 });
 
@@ -42,6 +52,9 @@ export const env = {
   port: parsed.data.PORT,
   clientUrl,
   databaseUrl: parsed.data.DATABASE_URL ?? '',
+  supabaseUrl: parsed.data.SUPABASE_URL?.replace(/\/+$/, '') ?? '',
+  supabaseServiceRoleKey: parsed.data.SUPABASE_SERVICE_ROLE_KEY ?? '',
+  supabaseStorageBucket: parsed.data.SUPABASE_STORAGE_BUCKET,
   isProduction: parsed.data.NODE_ENV === 'production',
   cookieSecure: parsed.data.COOKIE_SECURE || parsed.data.NODE_ENV === 'production',
   trustedOrigins,

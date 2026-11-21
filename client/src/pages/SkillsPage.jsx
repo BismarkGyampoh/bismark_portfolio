@@ -26,7 +26,7 @@ export default function SkillsPage() {
   return (
     <div className="py-14 sm:py-20">
       <Container>
-        <SectionHeading eyebrow="Capabilities" title="Skills" description="A practical blend of technical, problem-solving, and creative skills." />
+        <SectionHeading eyebrow="Skills" title="What I work with" description="The tools and skills I use across web development, IT support, databases, and design." />
         {loading ? <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Loading skills…</p> : null}
         {!loading ? (
           <div className="grid gap-6 md:grid-cols-2">

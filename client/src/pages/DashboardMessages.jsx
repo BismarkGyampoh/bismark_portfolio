@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowUpRight, Mail, MailCheck, RefreshCw } from 'lucide-react'
+import { ArrowUpRight, ChevronDown, ChevronUp, Mail, MailCheck, RefreshCw } from 'lucide-react'
 import { Button, Card, SectionHeading } from '../components/ui.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { requestJson } from '../services/api.js'
@@ -21,6 +21,7 @@ export function DashboardMessages() {
   const [error, setError] = useState('')
   const [unreadOnly, setUnreadOnly] = useState(false)
   const [updatingId, setUpdatingId] = useState('')
+  const [expandedIds, setExpandedIds] = useState(() => new Set())
   const [refreshVersion, setRefreshVersion] = useState(0)
 
   useEffect(() => {
@@ -61,12 +62,23 @@ export function DashboardMessages() {
       })
       if (!result?.data) throw new Error('The message could not be updated.')
 
-      setMessages((current) => current.map((item) => item.id === message.id ? result.data : item))
+      setMessages((current) => unreadOnly
+        ? current.filter((item) => item.id !== message.id)
+        : current.map((item) => item.id === message.id ? result.data : item))
     } catch (updateError) {
       setError(updateError instanceof Error ? updateError.message : 'Unable to mark the message as read.')
     } finally {
       setUpdatingId('')
     }
+  }
+
+  const toggleMessage = (id) => {
+    setExpandedIds((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
   }
 
   const refreshMessages = () => {
@@ -85,7 +97,7 @@ export function DashboardMessages() {
 
   return (
     <main>
-      <SectionHeading eyebrow="Messages" title="Inbox" description="Review contact and collaboration messages from your portfolio visitors." />
+      <SectionHeading eyebrow="Messages" title="Inbox" description="Expand a message to read it. Opening a message does not mark it as read; use the Mark read button when you’re ready." />
 
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -118,45 +130,69 @@ export function DashboardMessages() {
         <p role="status" className="py-12 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>Loading inbox…</p>
       ) : messages.length ? (
         <div className="grid gap-3">
-          {messages.map((message) => (
-            <Card key={message.id} className={`p-5 sm:p-6${message.read ? '' : ' dashboard-message-unread'}`}>
-              <article>
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>{message.subject}</h2>
-                      {!message.read ? <span className="dashboard-message-badge">Unread</span> : null}
+          {messages.map((message) => {
+            const expanded = expandedIds.has(message.id)
+            const contentId = `message-content-${message.id}`
+            return (
+              <Card key={message.id} className={`p-5 sm:p-6${message.read ? '' : ' dashboard-message-unread'}`}>
+                <article>
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>{message.subject}</h2>
+                        {!message.read ? <span className="dashboard-message-badge">Unread</span> : null}
+                      </div>
+                      <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                        {message.name} · <a className="hover:underline" href={`mailto:${message.email}`}>{message.email}</a>
+                      </p>
+                      <time className="mt-1 block text-xs" dateTime={message.createdAt} style={{ color: 'var(--text-secondary)' }}>
+                        {formatDate(message.createdAt)}
+                      </time>
                     </div>
-                    <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                      {message.name} · <a className="hover:underline" href={`mailto:${message.email}`}>{message.email}</a>
-                    </p>
-                    <time className="mt-1 block text-xs" dateTime={message.createdAt} style={{ color: 'var(--text-secondary)' }}>
-                      {formatDate(message.createdAt)}
-                    </time>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <a className="dashboard-message-action" href={`mailto:${message.email}?subject=${encodeURIComponent(`Re: ${message.subject}`)}`}>
-                      Reply <ArrowUpRight size={14} />
-                    </a>
-                    {!message.read ? (
+                    <div className="flex flex-wrap gap-2">
+                      <a className="dashboard-message-action" href={`mailto:${message.email}?subject=${encodeURIComponent(`Re: ${message.subject}`)}`}>
+                        Reply <ArrowUpRight size={14} />
+                      </a>
                       <button
                         type="button"
                         className="dashboard-message-action"
-                        onClick={() => markAsRead(message)}
-                        disabled={updatingId === message.id}
+                        onClick={() => toggleMessage(message.id)}
+                        aria-expanded={expanded}
+                        aria-controls={contentId}
                       >
-                        <MailCheck size={14} />
-                        {updatingId === message.id ? 'Saving…' : 'Mark read'}
+                        {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        {expanded ? 'Hide message' : 'Read message'}
                       </button>
-                    ) : null}
+                      {expanded && !message.read ? (
+                        <button
+                          type="button"
+                          className="dashboard-message-action"
+                          onClick={() => markAsRead(message)}
+                          disabled={updatingId === message.id}
+                        >
+                          <MailCheck size={14} />
+                          {updatingId === message.id ? 'Saving…' : 'Mark read'}
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-                <p className="mt-4 whitespace-pre-wrap border-t pt-4 text-sm leading-7" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
-                  {message.message}
-                </p>
-              </article>
-            </Card>
-          ))}
+                  {!expanded ? (
+                    <p className="mt-3 line-clamp-2 text-sm leading-7" style={{ color: 'var(--text-secondary)' }}>
+                      {`${message.message.slice(0, 180)}${message.message.length > 180 ? '…' : ''}`}
+                    </p>
+                  ) : null}
+                  <p
+                    id={contentId}
+                    hidden={!expanded}
+                    className="mt-4 whitespace-pre-wrap border-t pt-4 text-sm leading-7"
+                    style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
+                  >
+                    {message.message}
+                  </p>
+                </article>
+              </Card>
+            )
+          })}
         </div>
       ) : (
         <Card className="px-6 py-12 text-center">

@@ -22,6 +22,8 @@ export const profileSchema = z.object({
   whatsappUrl: z.string().trim().max(2048),
   imagePath: z.string().trim().max(2048),
   cvPath: z.string().trim().max(2048),
+  logoPath: z.string().trim().max(2048).optional().default(""),
+  faviconPath: z.string().trim().max(2048).optional().default(""),
   socials: z.array(socialLinkSchema).max(30),
 });
 

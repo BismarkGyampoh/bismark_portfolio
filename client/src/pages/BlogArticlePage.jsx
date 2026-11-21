@@ -24,7 +24,7 @@ export default function BlogArticlePage() {
   }, [slug])
 
   if (loading) return <div className="py-14 sm:py-20"><Container><p style={{ color: 'var(--text-secondary)' }}>Loading article…</p></Container></div>
-  if (!post) return <div className="py-14 sm:py-20"><Container><EmptyState title="Article not found" description="This article does not exist or is not published." /><div className="mt-6 text-center"><Link to="/blog" className="text-sm hover:underline" style={{ color: 'var(--accent-primary)' }}>Back to blog</Link></div></Container></div>
+  if (!post) return <div className="py-14 sm:py-20"><Container><EmptyState title="Can’t find that article" description="It may have been unpublished or the link may be out of date." /><div className="mt-6 text-center"><Link to="/blog" className="text-sm hover:underline" style={{ color: 'var(--accent-primary)' }}>Back to the blog</Link></div></Container></div>
 
   return (
     <div className="py-14 sm:py-20">

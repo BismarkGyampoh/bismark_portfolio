@@ -164,7 +164,7 @@ export function DashboardMedia() {
             </h2>
           </div>
           <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-            Upload a JPG, PNG, or WebP flyer (up to 10 MB), or provide an existing hosted image URL.
+            Upload a JPG, PNG, or WebP flyer (up to 10 MB) to persistent storage, or provide an existing hosted image URL.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Title" name="title" value={form.title} onChange={handleChange} placeholder="Event poster" required />

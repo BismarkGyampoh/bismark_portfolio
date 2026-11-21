@@ -69,11 +69,11 @@ export default function HomePage() {
         <Container className="home-introduction-grid">
           <div className="section-index">
             <span className="eyebrow">01 / About</span>
-            <h2 className="display-type">Technology is most useful when it works for people.</h2>
+            <h2 className="display-type">I like building technology that makes everyday work easier.</h2>
           </div>
           <div className="introduction-copy">
             <p>{profile.aboutShort}</p>
-            <Link className="text-link" to="/about">A little more about me <ArrowRight size={15} /></Link>
+            <Link className="text-link" to="/about">More about me <ArrowRight size={15} /></Link>
           </div>
         </Container>
       </section>
@@ -81,7 +81,7 @@ export default function HomePage() {
       <section className="home-work" id="work">
         <Container>
           <div className="section-heading-row">
-            <SectionHeading eyebrow="02 / Selected work" title="Projects & initiatives" description="A selection of web and creative work." />
+            <SectionHeading eyebrow="02 / Selected work" title="Projects and design" description="A few projects and designs I’ve worked on." />
             <Button to="/projects" variant="ghost" className="section-more">All projects <ArrowRight size={15} /></Button>
           </div>
           <div className="home-project-grid">
@@ -96,7 +96,7 @@ export default function HomePage() {
         <Container className="home-background-grid">
           <div>
             <p className="eyebrow">03 / What I bring</p>
-            <h2 className="display-type background-title">A practical mix of technical and creative skills.</h2>
+            <h2 className="display-type background-title">I work across technology and design.</h2>
             <div className="home-skills">
               {skills.map((skill) => <span key={skill}>{skill}</span>)}
             </div>
@@ -123,8 +123,8 @@ export default function HomePage() {
         <Container className="home-writing-inner">
           <div>
             <p className="eyebrow">04 / Notes</p>
-            <h2 className="display-type">Ideas from the work.</h2>
-            <p className="writing-copy">Occasional writing on technology, systems, and creative practice.</p>
+            <h2 className="display-type">Notes from my work.</h2>
+            <p className="writing-copy">A place for thoughts on technology, problem-solving, and design.</p>
             <Button to="/blog" variant="ghost">Visit the blog <ArrowRight size={15} /></Button>
           </div>
           {latest.length ? (
@@ -132,7 +132,7 @@ export default function HomePage() {
               {latest.map((post) => <BlogCard key={post.slug} post={post} />)}
             </div>
           ) : (
-            <p className="writing-note">New writing will appear here.</p>
+            <p className="writing-note">I haven’t published anything here yet. Check back later.</p>
           )}
         </Container>
       </section>
@@ -141,7 +141,7 @@ export default function HomePage() {
         <Container className="home-contact-inner">
           <div>
             <p className="eyebrow">Have a project or a question?</p>
-            <h2 className="display-type">Let’s make something useful.</h2>
+            <h2 className="display-type">Have something in mind? Let’s talk.</h2>
           </div>
           <div className="home-contact-actions">
             <a href={`mailto:${profile.email}`}>{profile.email}</a>

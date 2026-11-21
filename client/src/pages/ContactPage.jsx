@@ -5,12 +5,12 @@ import { submitContactMessage } from '../services/portfolio.js'
 
 function validate(values) {
   const errors = {}
-  if (!values.name.trim()) errors.name = 'Full name is required.'
-  if (!values.email.trim()) errors.email = 'Email is required.'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) errors.email = 'Enter a valid email address.'
-  if (!values.subject.trim()) errors.subject = 'Subject is required.'
-  if (!values.message.trim()) errors.message = 'Message is required.'
-  else if (values.message.trim().length < 10) errors.message = 'Message should be at least 10 characters.'
+  if (!values.name.trim()) errors.name = 'Please enter your name.'
+  if (!values.email.trim()) errors.email = 'Please enter your email address.'
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) errors.email = 'Please check the email address.'
+  if (!values.subject.trim()) errors.subject = 'Please add a subject.'
+  if (!values.message.trim()) errors.message = 'Please write a message.'
+  else if (values.message.trim().length < 10) errors.message = 'Please add a little more detail (at least 10 characters).'
   return errors
 }
 
@@ -49,7 +49,7 @@ export default function ContactPage() {
 
     if (result.success) {
       setStatus('ready')
-      setApiMessage('Your message has been sent successfully.')
+      setApiMessage('Thanks for your message. It’s been sent.')
       setValues({ name: '', email: '', subject: '', message: '' })
       setErrors({})
       return
@@ -64,7 +64,7 @@ export default function ContactPage() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
-            <SectionHeading eyebrow="Contact" title="Get in touch" description="Have a project in mind, need technical support, or just want to connect? Send a note." />
+            <SectionHeading eyebrow="Contact" title="Let’s talk" description="Have a project in mind or a technical problem to solve? Tell me a little about it." />
             <Card className="space-y-3 p-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
               <p><strong style={{ color: 'var(--text-primary)' }}>Email:</strong> {profile.email}</p>
               <p>

@@ -3,6 +3,7 @@ import { Button, Card, SectionHeading } from '../components/ui.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { requestJson } from '../services/api.js'
 import { profile as defaultProfile } from '../data/profile.js'
+import { AssetUploadField } from '../components/dashboard/AssetUploadField.jsx'
 
 function toForm(profile) {
   return {
@@ -38,8 +39,6 @@ const fields = [
   ['email', 'Public email'],
   ['whatsapp', 'WhatsApp number'],
   ['whatsappUrl', 'WhatsApp link'],
-  ['imagePath', 'Portrait image path or URL'],
-  ['cvPath', 'Résumé file path or URL'],
   ['socials', 'Social links (one per line: label | URL | handle)'],
 ]
 
@@ -99,6 +98,17 @@ export function DashboardProfile() {
       <Card className="p-5 sm:p-6">
         {loading ? <p style={{ color: 'var(--text-secondary)' }}>Loading profile…</p> : (
           <form onSubmit={submitProfile} className="grid gap-4">
+            <AssetUploadField
+              label="Portrait image"
+              value={form.imagePath}
+              onChange={(imagePath) => setForm((current) => ({ ...current, imagePath }))}
+            />
+            <AssetUploadField
+              label="Résumé (PDF)"
+              kind="document"
+              value={form.cvPath}
+              onChange={(cvPath) => setForm((current) => ({ ...current, cvPath }))}
+            />
             {fields.map(([name, label]) => {
               const textarea = ['introduction', 'aboutShort', 'aboutLong', 'interests', 'philosophy', 'socials'].includes(name)
               const Component = textarea ? 'textarea' : 'input'
